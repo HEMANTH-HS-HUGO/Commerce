@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Your Watchlist</h2>
+    <div class="listings">
+        {% for watchlist_entry in watchlistings %}
+          
+            <div class="list"> 
+                <a href="{% url 'listing_page' list_id=watchlist_entry.watchlist.id %}">
+                    <img src="{{watchlist_entry.watchlist.image.url}}" alt="{{watchlist_entry.watchlistlist.title}}"  width="100%" height="40%">
+                    <h4>{{watchlist_entry.watchlist.title}}</h4>
+                    <p>{{watchlist_entry.watchlist.description}}</p>
+                    <hr>
+                    <p><b>Current Bid:</b> {{watchlist_entry.watchlist.current_price}}</p>
+                    <p><b>Created:</b> {{watchlist_entry.watchlist.created_at}}</p>
+                    <p><b>Seller:</b> {{watchlist_entry.watchlist.owner}}</p>
+                    <p><b>Category:</b> {{watchlist_entry.watchlist.category}}</p>
+                </a>
+            </div>
+          
+        {% endfor %}
+    </div>
+{% endblock %}

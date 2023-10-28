@@ -1,0 +1,85 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+        <div class="page">
+                <img class="page_image" src="{{listing.image.url}}" alt="{{listing.title}}" >
+                <div class="textcontainer">
+                    <h3 class="page_title">{{listing.title}}</h3>
+                    <p class="page_description">{{listing.description}}</p>
+                    <hr>
+                    <div class="page_details">
+                        <h4><b>Current price: ₹</b>{{listing.current_price}}</h4> 
+                        <p>Created:{{listing.created_at}}</p>
+                        <p>Seller:{{listing.owner}}</p>
+                        <p>Category:{{listing.category}}</p>
+                        <div class="watchlist_btn">
+                            {% if is_in_watchlist %}
+                            <form action="{% url 'remove_watchlist' listing_id=listing.id  %}" method="POST">
+                                {% csrf_token %}
+                                <input type="submit" name="remove" value="Remove from Watchlist" class="btn btn-outline-secondary">
+                            </form>
+                            {% else %}
+                            <form action="{% url 'add_watchlist' listing_id=listing.id  %}" method="POST">
+                                {% csrf_token %}
+                                <input type="submit" name="add" value="Add to Watchlist" class="btn btn-outline-secondary">
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="new_bidding">
+                    {% if owner_name != user_name %}
+                        {% if listing.status == True %}
+                                {% if error_msg %}
+                                    <p class="alert alert-danger" role="alert">{{ error_msg }}</p>
+                                {% endif %}
+                                <form action="{% url 'place_bid' listing_id=listing.id %}" method="post" class="for_bid">
+                                    {% csrf_token %}
+                                    <div class="bid">
+                                        <label><b>Place Bid:</b></label>
+                                        <input autofocus type="text" name="new_price" placeholder="Bid" class="form-control">
+                                    </div>
+                                    <input type="submit" value="Place a Bid"  class="bid_btn btn btn-primary">
+                                </form>
+                        {% else %}
+                            {% if user_name == bid_by %}
+                                <h3> You Won it!🎉</h3>    
+                            {% endif %}   
+                        {% endif %}          
+                    {% endif %}
+                    </div>
+                </div>
+                {% if owner_name == user_name %}
+                <div class="close_btn">
+                        <form action="{% url 'close_listing' listing_id=listing.id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" name="close" value="close" class="btn btn-outline-danger">
+                        </form>
+                </div>
+                {% endif %}
+        </div>       
+        <div class="comment_area">
+            <hr>
+            <div class="comments">
+                <p><b>Comments:</b></p>
+                <ul>
+                    {% for comment in comments %}
+                    <li>{{comment}}</li>
+
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if owner_name != user_name %}
+            {% if listing.status == True %}
+            <div class="bid_comment">
+            <form action="{% url 'comment' listing_id=listing.id %}" method="post" >
+                        {% csrf_token %}
+                        <textarea name="comment" placeholder="Comment here.." rows="2" cols="40" class="form-control"></textarea>
+                        <input type="submit" value="Comment">
+            </form>
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+        </div> 
+{% endblock %}
+
